@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Справочник IT-терминов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .search-box {
+            padding: 30px;
+            background: #ecf0f1;
+            border-bottom: 2px solid #bdc3c7;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .search-btn:hover {
+            background: #5568d3;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .letter-group {
+            margin-bottom: 40px;
+        }
+        
+        .letter-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .term-card {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        
+        .term-name {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .term-definition {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .term-source {
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+        }
+        
+        /* Стили для пагинации */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+            flex-wrap: wrap;
+        }
+        
+        .pagination a,
+        .pagination span {
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #2c3e50;
+            background: #ecf0f1;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .pagination a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .pagination .current {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .pagination .disabled {
+            background: #bdc3c7;
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+        
+        .page-info {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .no-terms {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+            font-size: 1.2em;
+        }
+        
+        .reset-btn {
+            padding: 15px 20px;
+            background: #95a5a6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .pagination {
+                gap: 5px;
+            }
+            
+            .pagination a,
+            .pagination span {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Справочник IT-терминов</h1>
+            <p>Жаргон, сленг и профессиональные понятия</p>
+        </div>
+        
+        <div class="search-box">
+            <form class="search-form" method="get">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="search-input" 
+                    placeholder="Поиск термина..." 
+                    value="{{ query }}"
+                >
+                <button type="submit" class="search-btn">🔍 Найти</button>
+                {% if query %}
+                    <a href="{% url 'term_list' %}" class="reset-btn">Сброс</a>
+                {% endif %}
+            </form>
+        </div>
+        
+        <div class="content">
+            {% if terms %}
+                {% regroup terms by name|first as letter_list %}
+                
+                {% for letter_group in letter_list %}
+                    <div class="letter-group">
+                        <h2 class="letter-title">{{ letter_group.grouper }}</h2>
+                        
+                        {% for term in letter_group.list %}
+                            <div class="term-card">
+                                <div class="term-name">{{ term.name }}</div>
+                                <div class="term-definition">{{ term.definition }}</div>
+                                {% if term.source %}
+                                    <div class="term-source">
+                                        📖 Источник: {{ term.source }}
+                                        {% if term.source_link %}
+                                            | <a href="{{ term.source_link }}" target="_blank">Ссылка</a>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                
+                <!-- ПАГИНАЦИЯ -->
+                {% if page_obj.has_other_pages %}
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">← Назад</a>
+                        {% else %}
+                            <span class="disabled">← Назад</span>
+                        {% endif %}
+                        
+                        <span class="page-info">
+                            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                        </span>
+                        
+                        {% if page_obj.has_next %}
+                            <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Вперёд →</a>
+                        {% else %}
+                            <span class="disabled">Вперёд →</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="no-terms">
+                    😕 Термины не найдены
+                    {% if query %}
+                        <br><br>
+                        <a href="{% url 'term_list' %}" class="reset-btn">Показать все термины</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

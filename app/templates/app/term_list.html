@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Справочник IT-терминов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #1e88e5;
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #e3f2fd;
+            font-size: 1em;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bbdefb;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #bbdefb;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1e88e5;
+        }
+
+        .search-btn {
+            padding: 10px 25px;
+            background: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: #1565c0;
+        }
+
+        .reset-btn {
+            padding: 10px 15px;
+            background: #90a4ae;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #bbdefb;
+        }
+
+        .letter-title {
+            background: #1e88e5;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1.3em;
+            margin: 25px 0 15px 0;
+            display: inline-block;
+        }
+
+        .letter-title:first-child {
+            margin-top: 0;
+        }
+
+        .term {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f5f9fc;
+            border-radius: 5px;
+        }
+
+        .term-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+
+        .term-definition {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .term-gost {
+            font-size: 0.9em;
+            color: #78909c;
+            font-style: italic;
+        }
+
+        .term-gost a {
+            color: #1e88e5;
+            text-decoration: underline;
+        }
+
+        .pagination {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e3f2fd;
+            text-align: center;
+        }
+
+        .pagination a,
+        .pagination span {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #1e88e5;
+            background: white;
+        }
+
+        .pagination a:hover {
+            background: #e3f2fd;
+        }
+
+        .pagination .current {
+            background: #1e88e5;
+            color: white;
+            border-color: #1e88e5;
+        }
+
+        .page-info {
+            color: #78909c;
+            margin: 0 10px;
+        }
+
+        .no-terms {
+            text-align: center;
+            padding: 40px;
+            color: #78909c;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .term {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header">
+            <h1>Справочник IT терминов</h1>
+            <p>Жаргон, сленг и профессиональные понятия</p>
+            <h5>Данный справочник может быть полезным для судебных экспертов, юристов сотрудников правоохранительных органов</h5>
+        </div>
+
+        <!-- Поиск -->
+        <div class="search-box">
+            <form class="search-form" method="get">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="search-input" 
+                    placeholder="Поиск термина..." 
+                    value="{{ query }}"
+                >
+                <button type="submit" class="search-btn">Найти</button>
+                {% if query %}
+                    <a href="{% url 'term_list' %}" class="reset-btn">Сброс</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Контент -->
+        <div class="content">
+            {% if terms %}
+                {% regroup terms by name|first as letter_list %}
+                
+                {% for letter_group in letter_list %}
+                    <h2 class="letter-title">{{ letter_group.grouper }}</h2>
+                    
+                    {% for term in letter_group.list %}
+                        <div class="term">
+                            <div class="term-name">{{ term.name }}</div>
+                            <div class="term-definition">{{ term.definition }}</div>
+                            {% if term.gost_name %}
+                                <div class="term-gost">
+                                    Название в соответствии с ГОСТ: 
+                                    {% if term.gost_link %}
+                                        <a href="{{ term.gost_link }}" target="_blank">{{ term.gost_name }}</a>
+                                    {% else %}
+                                        {{ term.gost_name }}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                {% if page_obj.has_other_pages %}
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">← Назад</a>
+                        {% endif %}
+
+                        <span class="page-info">
+                            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                        </span>
+
+                        {% if page_obj.has_next %}
+                            <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">Вперёд →</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+            {% else %}
+                <div class="no-terms">Термины не найдены</div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -4,10 +4,6 @@ from django.urls import reverse
 from django.db import IntegrityError
 from app.models import Term
 
-# ==========================================
-# ТЕСТЫ ДЛЯ МОДЕЛИ (БАЗА ДАННЫХ)
-# ==========================================
-
 @pytest.mark.django_db
 def test_term_creation():
     """Проверка создания термина"""
@@ -37,10 +33,6 @@ def test_term_unique_name():
             gost_name="ГОСТ 2",
             gost_link=""
         )
-
-# ==========================================
-# ТЕСТЫ ДЛЯ СТРАНИЦЫ И ПОИСКА (VIEWS)
-# ==========================================
 
 @pytest.mark.django_db
 def test_main_page_status_code(client):

@@ -2,7 +2,6 @@
 from django.db import models
 
 class Term(models.Model):
-    """Термин из нормативного документа (ГОСТ, закон, приказ)"""
     
     name = models.CharField(
         max_length=255,

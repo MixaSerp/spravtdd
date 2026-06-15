@@ -1,49 +1,41 @@
-# --- Python ---
+
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# --- Виртуальное окружение ---
 venv/
 ENV/
 env/
 
-# --- База данных и медиа ---
 db.sqlite3
 *.sqlite3
 media/
 staticfiles/
 
-# --- Секреты и настройки ---
 .env
 *.key
 secret.py
 config/local_settings.py
 
-# --- IDE и редакторы ---
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
 
-# --- ОС ---
 .DS_Store
 Thumbs.db
 
-# --- Логи и временные файлы ---
 *.log
 tmp/
 temp/
 
-# --- Документация ---
 *.pdf
 *.docx
 !terms.docx        ← ← ← Важно!
 !README.md
 
-# --- Тесты и покрытие ---
 .pytest_cache/
 htmlcov/
 .coverage

@@ -6,7 +6,6 @@ from app.models import Term
 
 @pytest.mark.django_db
 def test_term_creation():
-    """Проверка создания термина"""
     term = Term.objects.create(
         name="Компьютерная информация",
         definition="Сведения в форме электрических сигналов",
@@ -18,7 +17,6 @@ def test_term_creation():
 
 @pytest.mark.django_db
 def test_term_unique_name():
-    """TDD Step 2: Проверка уникальности названия"""
     Term.objects.create(
         name="Тестовый термин",
         definition="Определение 1",
@@ -36,14 +34,12 @@ def test_term_unique_name():
 
 @pytest.mark.django_db
 def test_main_page_status_code(client):
-    """Проверка, что главная страница доступна (код 200)"""
     url = reverse('term_list')
     response = client.get(url)
     assert response.status_code == 200
 
 @pytest.mark.django_db
 def test_main_page_contains_terms(client):
-    """Проверка, что термины отображаются на странице"""
     Term.objects.create(name="Абап", definition="Язык SAP", gost_name="ГОСТ")
     Term.objects.create(name="Баг", definition="Ошибка", gost_name="ГОСТ")
     
@@ -56,7 +52,6 @@ def test_main_page_contains_terms(client):
 
 @pytest.mark.django_db
 def test_search_functionality(client):
-    """Проверка работы поиска по терминам"""
     Term.objects.create(name="Абап", definition="Язык программирования SAP", gost_name="ГОСТ")
     Term.objects.create(name="Баг", definition="Ошибка в программе", gost_name="ГОСТ")
     Term.objects.create(name="Бэкап", definition="Резервное копирование", gost_name="ГОСТ")
@@ -70,7 +65,6 @@ def test_search_functionality(client):
 
 @pytest.mark.django_db
 def test_main_page_groups_by_letter(client):
-    """Проверка группировки терминов по буквам"""
     Term.objects.create(name="Абап", definition="Опр А", gost_name="ГОСТ")
     Term.objects.create(name="Ава", definition="Опр А2", gost_name="ГОСТ")
     Term.objects.create(name="Баг", definition="Опр Б", gost_name="ГОСТ")
